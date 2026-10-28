@@ -158,6 +158,8 @@ h1{font-size:clamp(24px,3vw,32px);margin:7px 0 6px;letter-spacing:-.04em}
         <div class="metric"><div class="metric-top"><span class="metric-label">RPA / Ticket médio</span><span class="metric-icon">◉</span></div><div class="metric-value" id="mRpa">R$ 0,00</div><div class="metric-foot">Faturamento ÷ ativos</div></div>
         <div class="metric"><div class="metric-top"><span class="metric-label">Investimento por ativo</span><span class="metric-icon">↗</span></div><div class="metric-value" id="mPerActive">R$ 0,00</div><div class="metric-foot">Investimento ÷ ativos</div></div>
         <div class="metric"><div class="metric-top"><span class="metric-label">Ativos por canal</span><span class="metric-icon">⌘</span></div><div class="metric-value" id="mChannelActive">0 / 0</div><div class="metric-foot">Retaguarda / ER</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Itens vendidos</span><span class="metric-icon">▤</span></div><div class="metric-value" id="mItems">0</div><div class="metric-foot">Quantidade total de unidades vendidas</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">UPA · Unidades por ativo</span><span class="metric-icon">⊞</span></div><div class="metric-value" id="mUpa">0,0</div><div class="metric-foot">Itens vendidos ÷ ativos compradores</div></div>
       </div>
       <div class="two-col">
         <div class="panel">
@@ -194,6 +196,7 @@ h1{font-size:clamp(24px,3vw,32px);margin:7px 0 6px;letter-spacing:-.04em}
           <div class="form-grid">
             <div class="field"><label for="eventRevenue">Faturamento total (R$) *</label><input id="eventRevenue" type="number" min="0" step=".01" required placeholder="0,00"></div>
             <div class="field"><label for="eventActives">Ativos totais (clientes compradores) *</label><input id="eventActives" type="number" min="0" step="1" required placeholder="0"></div>
+            <div class="field"><label for="eventItems">Quantidade de itens vendidos *</label><input id="eventItems" type="number" min="0" step="1" required placeholder="Ex.: 245"></div>
           </div>
           <div class="form-section">03 / Investimento por categoria</div>
           <div class="cost-inputs">
@@ -244,7 +247,7 @@ const val=id=>Number($(id).value)||0;
 const dateBR=s=>s?new Date(s+'T12:00:00').toLocaleDateString('pt-BR'):'—';
 function loadEvents(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){return []}}
 function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events))}
-function totals(e){const costs=e.costs||{};const investment=Object.values(costs).reduce((a,b)=>a+(Number(b)||0),0);const revenue=Number(e.revenue)||0;const actives=Number(e.actives)||0;return {investment,revenue,actives,result:revenue-investment,roi:investment>0?((revenue-investment)/investment)*100:null,rpa:actives?revenue/actives:0,perActive:actives?investment/actives:0}}
+function totals(e){const costs=e.costs||{};const investment=Object.values(costs).reduce((a,b)=>a+(Number(b)||0),0);const revenue=Number(e.revenue)||0;const actives=Number(e.actives)||0;const items=Number(e.items)||0;return {investment,revenue,actives,items,upa:actives?items/actives:0,result:revenue-investment,roi:investment>0?((revenue-investment)/investment)*100:null,rpa:actives?revenue/actives:0,perActive:actives?investment/actives:0}}
 function current(){return events.find(e=>e.id===selectedId)||null}
 function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
 function setView(view){
@@ -266,7 +269,7 @@ function render(){
   $('selectedName').textContent='Nenhum evento cadastrado';$('selectedMeta').textContent='Cadastre seu primeiro evento para começar a acompanhar os resultados.';
   $('cyclePill').textContent='Ciclo —';$('datePill').textContent='Data —';
   ['mRevenue','mInvestment','mResult','mRpa','mPerActive'].forEach(id=>$(id).textContent=money(0));
-  $('mRoi').textContent='—';$('mActives').textContent='0';$('mChannelActive').textContent='0 / 0';$('mRoiFoot').textContent='Retorno sobre o investimento';
+  $('mRoi').textContent='—';$('mActives').textContent='0';$('mChannelActive').textContent='0 / 0';$('mItems').textContent='0';$('mUpa').textContent='0,0';$('mRoiFoot').textContent='Retorno sobre o investimento';
   $('costBreakdown').innerHTML='<div class="empty"><strong>Sem despesas por enquanto</strong>Cadastre um evento com seus custos para ver a composição.</div>';
   $('costTotal').textContent=money(0);$('retRevenue').textContent=money(0);$('erRevenue').textContent=money(0);
   $('retActives').textContent='0';$('erActives').textContent='0';$('retRpa').textContent=money(0);$('erRpa').textContent=money(0);
@@ -274,7 +277,7 @@ function render(){
  }
  const t=totals(e),ret=e.ret||{},er=e.er||{},retR=Number(ret.revenue)||0,retA=Number(ret.actives)||0,erR=Number(er.revenue)||0,erA=Number(er.actives)||0;
  $('selectedName').textContent=e.name;$('selectedMeta').textContent=(e.notes?e.notes+' · ':'')+'Resumo dos resultados do evento';$('cyclePill').textContent='Ciclo '+(e.cycle||'não informado');$('datePill').textContent=dateBR(e.date);
- $('mRevenue').textContent=money(t.revenue);$('mInvestment').textContent=money(t.investment);$('mResult').textContent=money(t.result);$('mActives').textContent=number(t.actives);$('mRpa').textContent=money(t.rpa);$('mPerActive').textContent=money(t.perActive);
+ $('mRevenue').textContent=money(t.revenue);$('mInvestment').textContent=money(t.investment);$('mResult').textContent=money(t.result);$('mActives').textContent=number(t.actives);$('mRpa').textContent=money(t.rpa);$('mPerActive').textContent=money(t.perActive);$('mItems').textContent=number(t.items);$('mUpa').textContent=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:2}).format(t.upa);
  $('mRoi').textContent=t.roi===null?'—':percent(t.roi);$('mRoiFoot').textContent=t.roi===null?'Cadastre um investimento para calcular':'(Faturamento − investimento) ÷ investimento';$('mRoi').style.color=t.roi===null?'var(--ink)':t.roi>=0?'var(--green)':'var(--red)';
  $('mChannelActive').textContent=number(retA)+' / '+number(erA);
  const costs=[['Lembrancinhas',Number(e.costs?.gifts)||0],['Decoração',Number(e.costs?.decor)||0],['Coffee break',Number(e.costs?.coffee)||0],['Outros custos',Number(e.costs?.other)||0]];
@@ -295,7 +298,7 @@ function openForm(e=null){
  $('eventForm').reset();$('eventId').value=e?.id||'';
  $('formHeading').textContent=e?'Editar evento':'Cadastrar novo evento';
  $('eventName').value=e?.name||'';$('eventDate').value=e?.date||new Date().toISOString().slice(0,10);$('eventCycle').value=e?.cycle||'';$('eventNotes').value=e?.notes||'';
- $('eventRevenue').value=e?.revenue??'';$('eventActives').value=e?.actives??'';
+ $('eventRevenue').value=e?.revenue??'';$('eventActives').value=e?.actives??'';$('eventItems').value=e?.items??'';
  $('costGifts').value=e?.costs?.gifts??0;$('costDecor').value=e?.costs?.decor??0;$('costCoffee').value=e?.costs?.coffee??0;$('costOther').value=e?.costs?.other??0;
  $('retRevenueInput').value=e?.ret?.revenue??0;$('retActivesInput').value=e?.ret?.actives??0;$('retNotesInput').value=e?.ret?.notes||'';
  $('erRevenueInput').value=e?.er?.revenue??0;$('erActivesInput').value=e?.er?.actives??0;$('erNotesInput').value=e?.er?.notes||'';
@@ -306,7 +309,7 @@ function updateLiveTotal(){$('liveTotal').textContent='Investimento total calcul
 $('eventForm').addEventListener('submit',ev=>{
  ev.preventDefault();
  const id=$('eventId').value||('evt_'+Date.now());
- const e={id,name:$('eventName').value.trim(),date:$('eventDate').value,cycle:$('eventCycle').value.trim(),notes:$('eventNotes').value.trim(),revenue:val('eventRevenue'),actives:val('eventActives'),
+ const e={id,name:$('eventName').value.trim(),date:$('eventDate').value,cycle:$('eventCycle').value.trim(),notes:$('eventNotes').value.trim(),revenue:val('eventRevenue'),actives:val('eventActives'),items:val('eventItems'),
  costs:{gifts:val('costGifts'),decor:val('costDecor'),coffee:val('costCoffee'),other:val('costOther')},
  ret:{revenue:val('retRevenueInput'),actives:val('retActivesInput'),notes:$('retNotesInput').value.trim()},
  er:{revenue:val('erRevenueInput'),actives:val('erActivesInput'),notes:$('erNotesInput').value.trim()},updatedAt:new Date().toISOString()};
@@ -317,8 +320,8 @@ $('eventForm').addEventListener('submit',ev=>{
 function deleteSelected(){const e=current();if(!e){showToast('Selecione um evento primeiro.');return}if(!confirm(`Excluir o evento “${e.name}”? Essa ação não pode ser desfeita.`))return;events=events.filter(x=>x.id!==e.id);selectedId=events[0]?.id||null;persist();render();renderHistory();showToast('Evento excluído.')}
 $('exportBtn').onclick=()=>{
  if(!events.length){showToast('Não há eventos para exportar.');return}
- const rows=[['Evento','Data','Ciclo','Faturamento','Investimento total','Lembrancinhas','Decoração','Coffee break','Outros','Resultado após investimento','ROI (%)','Ativos totais','RPA','Investimento por ativo','Retaguarda faturamento','Retaguarda ativos','ER faturamento','ER ativos','Observações']];
- events.forEach(e=>{const t=totals(e);rows.push([e.name,e.date,e.cycle,t.revenue,t.investment,e.costs?.gifts||0,e.costs?.decor||0,e.costs?.coffee||0,e.costs?.other||0,t.result,t.roi===null?'':t.roi,t.actives,t.rpa,t.perActive,e.ret?.revenue||0,e.ret?.actives||0,e.er?.revenue||0,e.er?.actives||0,e.notes||''])});
+ const rows=[['Evento','Data','Ciclo','Faturamento','Investimento total','Lembrancinhas','Decoração','Coffee break','Outros','Resultado após investimento','ROI (%)','Ativos totais','Itens vendidos','UPA (unidades por ativo)','RPA','Investimento por ativo','Retaguarda faturamento','Retaguarda ativos','ER faturamento','ER ativos','Observações']];
+ events.forEach(e=>{const t=totals(e);rows.push([e.name,e.date,e.cycle,t.revenue,t.investment,e.costs?.gifts||0,e.costs?.decor||0,e.costs?.coffee||0,e.costs?.other||0,t.result,t.roi===null?'':t.roi,t.actives,t.items,t.upa,t.rpa,t.perActive,e.ret?.revenue||0,e.ret?.actives||0,e.er?.revenue||0,e.er?.actives||0,e.notes||''])});
  const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='grupo-mille-eventos.csv';a.click();URL.revokeObjectURL(url);showToast('CSV exportado.');
 };
