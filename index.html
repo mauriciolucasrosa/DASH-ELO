@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo Mille | Gestão de Eventos</title>
+<style>
+:root{
+  --green:#53664e;--green-dark:#344631;--green-soft:#e9eee6;--green-pale:#f4f6f1;
+  --ink:#202820;--muted:#7a8278;--line:#e5e9e2;--white:#fff;--bg:#f7f8f5;
+  --orange:#d98a5b;--red:#bd5e56;--shadow:0 8px 28px rgba(39,55,34,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:25px 17px;display:flex;flex-direction:column;gap:28px}
+.brand{padding:2px 12px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.brand img{width:64px;height:64px;object-fit:contain}
+.brand-name{font-size:17px;font-weight:750;letter-spacing:.02em;color:var(--green-dark)}
+.brand-sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.nav-label{font-size:10px;font-weight:800;letter-spacing:.15em;color:#a0a69c;padding:0 12px 9px;text-transform:uppercase}
+.nav-btn{width:100%;border:0;background:transparent;text-align:left;padding:12px;border-radius:12px;color:#687166;display:flex;align-items:center;gap:11px;font-weight:600;font-size:13px;margin:3px 0}
+.nav-btn:hover,.nav-btn.active{background:var(--green-soft);color:var(--green-dark)}
+.nav-btn .ico{font-size:17px;width:21px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:14px 12px;border-radius:14px;background:var(--green-pale);font-size:12px;color:var(--muted);line-height:1.5}
+.sidebar-bottom strong{display:block;color:var(--green-dark);font-size:13px;margin-bottom:3px}
+main{padding:30px clamp(18px,3vw,42px) 50px;max-width:1600px;width:100%;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:27px}
+.eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--green);font-weight:800}
+h1{font-size:clamp(24px,3vw,32px);margin:7px 0 6px;letter-spacing:-.04em}
+.subtitle{font-size:13px;color:var(--muted)}
+.top-actions{display:flex;gap:9px;align-items:center}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:11px 15px;border-radius:10px;font-size:12px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-dark)}
+.btn-danger{color:var(--red);border-color:#f0d8d5}
+.event-strip{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(120deg,#354a32,#5c7055);color:#fff;border-radius:18px;padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow)}
+.event-strip .kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#d8e2d3;font-weight:800}
+.event-strip h2{font-size:21px;letter-spacing:-.03em;margin:7px 0 5px}
+.event-strip p{font-size:12px;color:#d9e0d5;margin:0}
+.event-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:11px;padding:7px 10px;border:1px solid rgba(255,255,255,.25);border-radius:100px;color:#f5f7f2;white-space:nowrap}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0 13px}
+.section-head h3{font-size:15px;margin:0;letter-spacing:-.02em}
+.section-head span{font-size:11px;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px 18px 16px;box-shadow:0 2px 10px rgba(39,55,34,.02);min-width:0}
+.metric-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.metric-label{font-size:11px;color:var(--muted);font-weight:700}
+.metric-icon{height:31px;width:31px;border-radius:9px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-dark);font-size:15px}
+.metric-value{font-size:clamp(20px,2.1vw,27px);font-weight:800;letter-spacing:-.05em;margin:15px 0 6px;overflow-wrap:anywhere}
+.metric-foot{font-size:11px;color:var(--muted)}
+.metric-foot.positive{color:var(--green)}
+.two-col{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:15px;margin-top:16px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;min-width:0}
+.panel h3{font-size:14px;margin:0 0 5px}
+.panel-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
+.cost-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin:14px 0}
+.cost-name{font-size:12px;font-weight:650}
+.cost-detail{font-size:10px;color:var(--muted);margin-top:4px}
+.cost-amount{font-size:12px;font-weight:800;text-align:right}
+.bar{height:6px;border-radius:99px;background:#edf0ea;margin-top:8px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:var(--green)}
+.total-cost{border-top:1px solid var(--line);padding-top:15px;margin-top:16px;display:flex;justify-content:space-between;font-size:12px;font-weight:800}
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.channel{padding:16px;border-radius:13px;background:#f7f8f5;border:1px solid #edf0e9}
+.channel-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:15px}
+.channel-title{font-size:12px;font-weight:800}
+.channel-tag{font-size:9px;letter-spacing:.08em;text-transform:uppercase;background:#e6ece2;color:var(--green-dark);padding:5px 7px;border-radius:7px}
+.channel-value{font-size:21px;font-weight:800;letter-spacing:-.04em}
+.channel-label{font-size:10px;color:var(--muted);margin-top:3px}
+.channel-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid #e5e9e1;margin-top:14px;padding-top:12px}
+.channel-stats strong{font-size:13px;display:block}
+.channel-stats span{font-size:10px;color:var(--muted)}
+.history-table{width:100%;border-collapse:collapse;font-size:12px}
+.history-table th{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;padding:12px 10px;border-bottom:1px solid var(--line)}
+.history-table td{padding:14px 10px;border-bottom:1px solid #f0f2ed}
+.history-table tr:last-child td{border-bottom:0}
+.history-table tbody tr{cursor:pointer}
+.history-table tbody tr:hover{background:#fafbf8}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:5px 8px;border-radius:30px;background:var(--green-soft);color:var(--green-dark);white-space:nowrap}
+.status::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green)}
+.empty{padding:32px 14px;text-align:center;color:var(--muted);font-size:12px}
+.empty strong{display:block;color:var(--ink);margin-bottom:6px;font-size:14px}
+.view{display:none}.view.active{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:750;color:#5f695c}
+.field input,.field select,.field textarea{width:100%;border:1px solid #dfe5db;border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink);outline:none;font-size:12px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(83,102,78,.1)}
+.field small{font-size:10px;color:var(--muted)}
+.form-section{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:850;padding-bottom:10px;border-bottom:1px solid var(--line);margin:25px 0 15px}
+.cost-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:24px}
+.channel-form{border:1px solid var(--line);padding:15px;border-radius:13px;margin-top:12px}
+.channel-form h4{font-size:12px;margin:0 0 12px}
+.channel-form .form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.notice{background:#f5f7f2;border:1px solid #e3e9de;color:#687363;padding:12px 14px;border-radius:10px;font-size:11px;line-height:1.5;margin-top:15px}
+.toast{position:fixed;bottom:22px;right:22px;background:#263724;color:white;padding:13px 17px;border-radius:12px;font-size:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none;z-index:10}
+.toast.show{opacity:1;transform:translateY(0)}
+.mobile-menu{display:none}
+@media(max-width:1050px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}}
+@media(max-width:700px){
+ .app{grid-template-columns:1fr}.sidebar{padding:12px 14px;gap:12px;border-right:0;border-bottom:1px solid var(--line)}
+ .brand{padding:0 4px 10px;border:0}.brand img{width:44px;height:44px}.brand-name{font-size:15px}
+ .nav-label,.sidebar-bottom{display:none}.nav{display:flex;gap:5px;overflow:auto}.nav-btn{width:auto;white-space:nowrap;margin:0;padding:9px 11px;font-size:11px}.nav-btn .ico{font-size:14px}
+ main{padding:20px 14px 35px}.topbar{align-items:flex-start}.top-actions .btn:not(.btn-primary){display:none}
+ .event-strip{padding:18px;align-items:flex-start;flex-direction:column}.event-badges{justify-content:flex-start}
+ .metrics{gap:9px}.metric{padding:13px}.metric-value{font-size:21px}.metric-label{font-size:10px}.metric-icon{height:27px;width:27px}
+ .panel{padding:15px}.channel-grid{grid-template-columns:1fr 1fr}.channel{padding:12px}.channel-value{font-size:18px}
+ .form-grid,.cost-inputs{grid-template-columns:1fr}.field.full{grid-column:auto}.channel-form .form-grid{grid-template-columns:1fr 1fr}
+ .history-wrap{overflow:auto}.history-table{min-width:620px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img alt="Logo Grupo Mille" src="data:image/jpeg;base64,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">
+      <div><div class="brand-name">GRUPO MILLE</div><div class="brand-sub">Gestão de eventos</div></div>
+    </div>
+    <div>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="dashboard"><span class="ico">▦</span>Visão geral</button>
+        <button class="nav-btn" data-view="form"><span class="ico">＋</span>Cadastrar evento</button>
+        <button class="nav-btn" data-view="history"><span class="ico">◷</span>Histórico de eventos</button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom"><strong>Grupo Mille · O Boticário</strong>Controle de investimento, desempenho e retorno das ações promocionais.</div>
+  </aside>
+  <main>
+    <section class="topbar">
+      <div><div class="eyebrow">Inteligência comercial / Eventos</div><h1 id="pageTitle">Visão geral</h1><div class="subtitle" id="pageSubtitle">Acompanhe o retorno das suas ações promocionais.</div></div>
+      <div class="top-actions">
+        <button class="btn" id="exportBtn">↧ Exportar CSV</button>
+        <button class="btn btn-primary" id="newEventBtn">＋ Novo evento</button>
+      </div>
+    </section>
+
+    <section class="view active" id="dashboardView">
+      <div class="event-strip">
+        <div><div class="kicker">Evento selecionado</div><h2 id="selectedName">Nenhum evento cadastrado</h2><p id="selectedMeta">Cadastre seu primeiro evento para começar a acompanhar os resultados.</p></div>
+        <div class="event-badges"><span class="pill" id="cyclePill">Ciclo —</span><span class="pill" id="datePill">Data —</span></div>
+      </div>
+      <div class="section-head"><h3>Indicadores de desempenho</h3><span>Consolidado do evento selecionado</span></div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-top"><span class="metric-label">Faturamento total</span><span class="metric-icon">↗</span></div><div class="metric-value" id="mRevenue">R$ 0,00</div><div class="metric-foot">Receita gerada no evento</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Investimento total</span><span class="metric-icon">◈</span></div><div class="metric-value" id="mInvestment">R$ 0,00</div><div class="metric-foot" id="mInvestmentFoot">Soma de todas as despesas</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">ROI do evento</span><span class="metric-icon">⌁</span></div><div class="metric-value" id="mRoi">—</div><div class="metric-foot" id="mRoiFoot">Retorno sobre o investimento</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Resultado após investimento</span><span class="metric-icon">◎</span></div><div class="metric-value" id="mResult">R$ 0,00</div><div class="metric-foot">Faturamento menos investimento</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Ativos</span><span class="metric-icon">♙</span></div><div class="metric-value" id="mActives">0</div><div class="metric-foot">Clientes que compraram</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">RPA / Ticket médio</span><span class="metric-icon">◉</span></div><div class="metric-value" id="mRpa">R$ 0,00</div><div class="metric-foot">Faturamento ÷ ativos</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Investimento por ativo</span><span class="metric-icon">↗</span></div><div class="metric-value" id="mPerActive">R$ 0,00</div><div class="metric-foot">Investimento ÷ ativos</div></div>
+        <div class="metric"><div class="metric-top"><span class="metric-label">Ativos por canal</span><span class="metric-icon">⌘</span></div><div class="metric-value" id="mChannelActive">0 / 0</div><div class="metric-foot">Retaguarda / ER</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>Investimento por categoria</h3><div class="panel-sub">Entenda para onde foi o orçamento do evento.</div>
+          <div id="costBreakdown"><div class="empty"><strong>Sem despesas por enquanto</strong>Cadastre um evento com seus custos para ver a composição.</div></div>
+          <div class="total-cost"><span>INVESTIMENTO CONSOLIDADO</span><span id="costTotal">R$ 0,00</span></div>
+        </div>
+        <div class="panel">
+          <h3>Desempenho por canal</h3><div class="panel-sub">Compare vendas digitais e presenciais.</div>
+          <div class="channel-grid">
+            <div class="channel"><div class="channel-head"><span class="channel-title">Retaguarda</span><span class="channel-tag">App + WhatsApp</span></div><div class="channel-value" id="retRevenue">R$ 0,00</div><div class="channel-label">Faturamento</div><div class="channel-stats"><div><strong id="retActives">0</strong><span>Ativos</span></div><div><strong id="retRpa">R$ 0,00</strong><span>RPA</span></div></div></div>
+            <div class="channel"><div class="channel-head"><span class="channel-title">ER</span><span class="channel-tag">Presencial</span></div><div class="channel-value" id="erRevenue">R$ 0,00</div><div class="channel-label">Faturamento</div><div class="channel-stats"><div><strong id="erActives">0</strong><span>Ativos</span></div><div><strong id="erRpa">R$ 0,00</strong><span>RPA</span></div></div></div>
+          </div>
+          <div class="notice">Os números por canal são informativos e fazem parte do faturamento total. Informe os dados de Retaguarda e ER ao cadastrar o evento.</div>
+        </div>
+      </div>
+      <div class="section-head"><h3>Eventos recentes</h3><button class="btn" id="seeHistoryBtn">Ver histórico →</button></div>
+      <div class="panel history-wrap" id="recentTable"></div>
+    </section>
+
+    <section class="view" id="formView">
+      <div class="panel">
+        <h3 id="formHeading">Cadastrar novo evento</h3><div class="panel-sub">Preencha os dados abaixo. Os indicadores serão calculados automaticamente.</div>
+        <form id="eventForm">
+          <input type="hidden" id="eventId">
+          <div class="form-section">01 / Identificação do evento</div>
+          <div class="form-grid">
+            <div class="field"><label for="eventName">Nome do evento *</label><input id="eventName" required placeholder="Ex.: Dia da Beleza Mille"></div>
+            <div class="field"><label for="eventDate">Data do evento *</label><input id="eventDate" type="date" required></div>
+            <div class="field"><label for="eventCycle">Ciclo</label><input id="eventCycle" placeholder="Ex.: Ciclo 12 / 2026"></div>
+            <div class="field"><label for="eventNotes">Observações</label><input id="eventNotes" placeholder="Informações adicionais (opcional)"></div>
+          </div>
+          <div class="form-section">02 / Resultado comercial</div>
+          <div class="form-grid">
+            <div class="field"><label for="eventRevenue">Faturamento total (R$) *</label><input id="eventRevenue" type="number" min="0" step=".01" required placeholder="0,00"></div>
+            <div class="field"><label for="eventActives">Ativos totais (clientes compradores) *</label><input id="eventActives" type="number" min="0" step="1" required placeholder="0"></div>
+          </div>
+          <div class="form-section">03 / Investimento por categoria</div>
+          <div class="cost-inputs">
+            <div class="field"><label for="costGifts">Lembrancinhas (R$)</label><input id="costGifts" type="number" min="0" step=".01" value="0"></div>
+            <div class="field"><label for="costDecor">Decoração (R$)</label><input id="costDecor" type="number" min="0" step=".01" value="0"></div>
+            <div class="field"><label for="costCoffee">Coffee break (R$)</label><input id="costCoffee" type="number" min="0" step=".01" value="0"></div>
+            <div class="field"><label for="costOther">Outros custos (R$)</label><input id="costOther" type="number" min="0" step=".01" value="0"></div>
+          </div>
+          <div class="notice" id="liveTotal">Investimento total calculado: R$ 0,00</div>
+          <div class="form-section">04 / Quebra por canal</div>
+          <div class="channel-form">
+            <h4>Retaguarda · App e WhatsApp</h4>
+            <div class="form-grid">
+              <div class="field"><label for="retRevenueInput">Faturamento (R$)</label><input id="retRevenueInput" type="number" min="0" step=".01" value="0"></div>
+              <div class="field"><label for="retActivesInput">Ativos</label><input id="retActivesInput" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="retNotesInput">Detalhe (opcional)</label><input id="retNotesInput" placeholder="Ex.: campanha no app"></div>
+            </div>
+          </div>
+          <div class="channel-form">
+            <h4>ER · Espaço do Revendedor (presencial)</h4>
+            <div class="form-grid">
+              <div class="field"><label for="erRevenueInput">Faturamento (R$)</label><input id="erRevenueInput" type="number" min="0" step=".01" value="0"></div>
+              <div class="field"><label for="erActivesInput">Ativos</label><input id="erActivesInput" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="erNotesInput">Detalhe (opcional)</label><input id="erNotesInput" placeholder="Ex.: atendimento presencial"></div>
+            </div>
+          </div>
+          <div class="notice">Atenção: os valores de Retaguarda + ER devem corresponder ao faturamento e aos ativos totais, quando toda a venda puder ser atribuída a esses dois canais. Os custos do evento são consolidados uma única vez no total geral.</div>
+          <div class="form-actions"><button class="btn" type="button" id="cancelFormBtn">Cancelar</button><button class="btn btn-primary" type="submit">✓ Salvar evento</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="view" id="historyView">
+      <div class="section-head"><h3>Histórico de eventos</h3><span id="historyCount">0 eventos cadastrados</span></div>
+      <div class="panel history-wrap" id="historyTable"></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const STORAGE_KEY='grupoMilleEventos_v1';
+let events=loadEvents(), selectedId=events[0]?.id||null;
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
+const number=n=>new Intl.NumberFormat('pt-BR').format(Number(n)||0);
+const percent=n=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1,minimumFractionDigits:1}).format(n)+'%';
+const val=id=>Number($(id).value)||0;
+const dateBR=s=>s?new Date(s+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+function loadEvents(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){return []}}
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events))}
+function totals(e){const costs=e.costs||{};const investment=Object.values(costs).reduce((a,b)=>a+(Number(b)||0),0);const revenue=Number(e.revenue)||0;const actives=Number(e.actives)||0;return {investment,revenue,actives,result:revenue-investment,roi:investment>0?((revenue-investment)/investment)*100:null,rpa:actives?revenue/actives:0,perActive:actives?investment/actives:0}}
+function current(){return events.find(e=>e.id===selectedId)||null}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function setView(view){
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ $(view+'View').classList.add('active');
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+ const titles={dashboard:['Visão geral','Acompanhe o retorno das suas ações promocionais.'],form:['Cadastro de evento','Registre resultados, custos e canais de venda.'],history:['Histórico de eventos','Consulte, edite ou remova eventos já registrados.']};
+ $('pageTitle').textContent=titles[view][0];$('pageSubtitle').textContent=titles[view][1];
+ if(view==='history')renderHistory();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+$('newEventBtn').onclick=()=>openForm();
+$('seeHistoryBtn').onclick=()=>setView('history');
+$('cancelFormBtn').onclick=()=>setView('dashboard');
+function render(){
+ const e=current();
+ if(!e){
+  $('selectedName').textContent='Nenhum evento cadastrado';$('selectedMeta').textContent='Cadastre seu primeiro evento para começar a acompanhar os resultados.';
+  $('cyclePill').textContent='Ciclo —';$('datePill').textContent='Data —';
+  ['mRevenue','mInvestment','mResult','mRpa','mPerActive'].forEach(id=>$(id).textContent=money(0));
+  $('mRoi').textContent='—';$('mActives').textContent='0';$('mChannelActive').textContent='0 / 0';$('mRoiFoot').textContent='Retorno sobre o investimento';
+  $('costBreakdown').innerHTML='<div class="empty"><strong>Sem despesas por enquanto</strong>Cadastre um evento com seus custos para ver a composição.</div>';
+  $('costTotal').textContent=money(0);$('retRevenue').textContent=money(0);$('erRevenue').textContent=money(0);
+  $('retActives').textContent='0';$('erActives').textContent='0';$('retRpa').textContent=money(0);$('erRpa').textContent=money(0);
+  $('recentTable').innerHTML='<div class="empty"><strong>Seu histórico começa aqui</strong>Cadastre um evento para visualizar os resultados nesta área.</div>';return;
+ }
+ const t=totals(e),ret=e.ret||{},er=e.er||{},retR=Number(ret.revenue)||0,retA=Number(ret.actives)||0,erR=Number(er.revenue)||0,erA=Number(er.actives)||0;
+ $('selectedName').textContent=e.name;$('selectedMeta').textContent=(e.notes?e.notes+' · ':'')+'Resumo dos resultados do evento';$('cyclePill').textContent='Ciclo '+(e.cycle||'não informado');$('datePill').textContent=dateBR(e.date);
+ $('mRevenue').textContent=money(t.revenue);$('mInvestment').textContent=money(t.investment);$('mResult').textContent=money(t.result);$('mActives').textContent=number(t.actives);$('mRpa').textContent=money(t.rpa);$('mPerActive').textContent=money(t.perActive);
+ $('mRoi').textContent=t.roi===null?'—':percent(t.roi);$('mRoiFoot').textContent=t.roi===null?'Cadastre um investimento para calcular':'(Faturamento − investimento) ÷ investimento';$('mRoi').style.color=t.roi===null?'var(--ink)':t.roi>=0?'var(--green)':'var(--red)';
+ $('mChannelActive').textContent=number(retA)+' / '+number(erA);
+ const costs=[['Lembrancinhas',Number(e.costs?.gifts)||0],['Decoração',Number(e.costs?.decor)||0],['Coffee break',Number(e.costs?.coffee)||0],['Outros custos',Number(e.costs?.other)||0]];
+ $('costBreakdown').innerHTML=costs.every(c=>!c[1])?'<div class="empty"><strong>Nenhum custo informado</strong>Este evento ainda não tem despesas cadastradas.</div>':costs.map(c=>`<div class="cost-row"><div><div class="cost-name">${c[0]}</div><div class="bar"><div class="bar-fill" style="width:${t.investment?Math.min(100,c[1]/t.investment*100):0}%"></div></div></div><div class="cost-amount">${money(c[1])}<div class="cost-detail">${t.investment?percent(c[1]/t.investment*100):'0,0%'}</div></div></div>`).join('');
+ $('costTotal').textContent=money(t.investment);
+ $('retRevenue').textContent=money(retR);$('erRevenue').textContent=money(erR);$('retActives').textContent=number(retA);$('erActives').textContent=number(erA);$('retRpa').textContent=money(retA?retR/retA:0);$('erRpa').textContent=money(erA?erR/erA:0);
+ renderRecent();
+}
+function tableHTML(items){
+ if(!items.length)return '<div class="empty"><strong>Nenhum evento cadastrado</strong>Use “Novo evento” para registrar sua primeira ação promocional.</div>';
+ return `<table class="history-table"><thead><tr><th>Evento</th><th>Data</th><th>Faturamento</th><th>Investimento</th><th>ROI</th><th>Status</th></tr></thead><tbody>${items.map(e=>{const t=totals(e);return `<tr data-id="${e.id}" title="Clique para abrir este evento"><td><strong>${escapeHTML(e.name)}</strong><div style="font-size:10px;color:#899184;margin-top:4px">${escapeHTML(e.cycle||'Ciclo não informado')}</div></td><td>${dateBR(e.date)}</td><td>${money(t.revenue)}</td><td>${money(t.investment)}</td><td style="font-weight:800;color:${t.roi===null?'var(--muted)':t.roi>=0?'var(--green)':'var(--red)'}">${t.roi===null?'—':percent(t.roi)}</td><td><span class="status">Registrado</span></td></tr>`}).join('')}</tbody></table>`;
+}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderRecent(){const sorted=[...events].sort((a,b)=>(b.date||'').localeCompare(a.date||''));$('recentTable').innerHTML=tableHTML(sorted.slice(0,5));bindTableRows($('recentTable'))}
+function renderHistory(){const sorted=[...events].sort((a,b)=>(b.date||'').localeCompare(a.date||''));$('historyCount').textContent=events.length+' evento'+(events.length===1?'':'s')+' cadastrado'+(events.length===1?'':'s');$('historyTable').innerHTML=tableHTML(sorted);if(events.length)$('historyTable').insertAdjacentHTML('beforeend','<div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px"><button class="btn btn-danger" id="deleteSelectedBtn">Excluir selecionado</button><button class="btn btn-primary" id="editSelectedBtn">Editar selecionado</button></div>');bindTableRows($('historyTable'));if($('editSelectedBtn'))$('editSelectedBtn').onclick=()=>{if(current())openForm(current());else showToast('Selecione um evento na tabela.');};if($('deleteSelectedBtn'))$('deleteSelectedBtn').onclick=deleteSelected}
+function bindTableRows(root){root.querySelectorAll('tbody tr[data-id]').forEach(tr=>tr.addEventListener('click',()=>{selectedId=tr.dataset.id;render();setView('dashboard')}))}
+function openForm(e=null){
+ $('eventForm').reset();$('eventId').value=e?.id||'';
+ $('formHeading').textContent=e?'Editar evento':'Cadastrar novo evento';
+ $('eventName').value=e?.name||'';$('eventDate').value=e?.date||new Date().toISOString().slice(0,10);$('eventCycle').value=e?.cycle||'';$('eventNotes').value=e?.notes||'';
+ $('eventRevenue').value=e?.revenue??'';$('eventActives').value=e?.actives??'';
+ $('costGifts').value=e?.costs?.gifts??0;$('costDecor').value=e?.costs?.decor??0;$('costCoffee').value=e?.costs?.coffee??0;$('costOther').value=e?.costs?.other??0;
+ $('retRevenueInput').value=e?.ret?.revenue??0;$('retActivesInput').value=e?.ret?.actives??0;$('retNotesInput').value=e?.ret?.notes||'';
+ $('erRevenueInput').value=e?.er?.revenue??0;$('erActivesInput').value=e?.er?.actives??0;$('erNotesInput').value=e?.er?.notes||'';
+ updateLiveTotal();setView('form');
+}
+function updateLiveTotal(){$('liveTotal').textContent='Investimento total calculado: '+money(val('costGifts')+val('costDecor')+val('costCoffee')+val('costOther'))}
+['costGifts','costDecor','costCoffee','costOther'].forEach(id=>$(id).addEventListener('input',updateLiveTotal));
+$('eventForm').addEventListener('submit',ev=>{
+ ev.preventDefault();
+ const id=$('eventId').value||('evt_'+Date.now());
+ const e={id,name:$('eventName').value.trim(),date:$('eventDate').value,cycle:$('eventCycle').value.trim(),notes:$('eventNotes').value.trim(),revenue:val('eventRevenue'),actives:val('eventActives'),
+ costs:{gifts:val('costGifts'),decor:val('costDecor'),coffee:val('costCoffee'),other:val('costOther')},
+ ret:{revenue:val('retRevenueInput'),actives:val('retActivesInput'),notes:$('retNotesInput').value.trim()},
+ er:{revenue:val('erRevenueInput'),actives:val('erActivesInput'),notes:$('erNotesInput').value.trim()},updatedAt:new Date().toISOString()};
+ if(!e.name||!e.date){showToast('Preencha o nome e a data do evento.');return}
+ const idx=events.findIndex(x=>x.id===id);if(idx>=0)events[idx]=e;else events.push(e);
+ selectedId=id;persist();render();setView('dashboard');showToast(idx>=0?'Evento atualizado com sucesso!':'Evento cadastrado com sucesso!');
+});
+function deleteSelected(){const e=current();if(!e){showToast('Selecione um evento primeiro.');return}if(!confirm(`Excluir o evento “${e.name}”? Essa ação não pode ser desfeita.`))return;events=events.filter(x=>x.id!==e.id);selectedId=events[0]?.id||null;persist();render();renderHistory();showToast('Evento excluído.')}
+$('exportBtn').onclick=()=>{
+ if(!events.length){showToast('Não há eventos para exportar.');return}
+ const rows=[['Evento','Data','Ciclo','Faturamento','Investimento total','Lembrancinhas','Decoração','Coffee break','Outros','Resultado após investimento','ROI (%)','Ativos totais','RPA','Investimento por ativo','Retaguarda faturamento','Retaguarda ativos','ER faturamento','ER ativos','Observações']];
+ events.forEach(e=>{const t=totals(e);rows.push([e.name,e.date,e.cycle,t.revenue,t.investment,e.costs?.gifts||0,e.costs?.decor||0,e.costs?.coffee||0,e.costs?.other||0,t.result,t.roi===null?'':t.roi,t.actives,t.rpa,t.perActive,e.ret?.revenue||0,e.ret?.actives||0,e.er?.revenue||0,e.er?.actives||0,e.notes||''])});
+ const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='grupo-mille-eventos.csv';a.click();URL.revokeObjectURL(url);showToast('CSV exportado.');
+};
+render();
+</script>
+</body>
+</html>
